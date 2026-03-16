@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ArticleRepository } from '../repositories/article.repository';
 import { CreateArticleDto } from '../dtos/create-article.dto';
 import { ArticleEntity } from '../entities/article.entity';
@@ -14,12 +14,18 @@ import { UpdateArticleDto } from '../dtos/update-article.dto';
 import { EntityExistsException } from '../../common/exceptions/entity-exists.exception';
 import { UserService } from '../../user/services/user.service';
 import { ActionIsForbiddenForUserException } from '../../user/exceptions/action-is-forbidden-for-user.exception';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
+import * as crypto from 'crypto';
+import { REDIS_TTL } from '../../common/consts/glolbal.const';
 
 @Injectable()
 export class ArticleService {
 	constructor(
 		private readonly articleRepository: ArticleRepository,
 		private readonly userService: UserService,
+		@Inject(CACHE_MANAGER)
+		private readonly cacheManager: Cache,
 	) {}
 
 	/**
@@ -40,6 +46,7 @@ export class ArticleService {
 			author,
 			active: dto.active ?? undefined,
 		});
+		await this.deleteInvalidCache();
 		return this.getById(article.id);
 	}
 
@@ -66,6 +73,7 @@ export class ArticleService {
 					: null
 				: article.publicDate;
 		await this.articleRepository.save({ ...article, ...dto, active, publicDate });
+		await this.deleteInvalidCache();
 		return this.getById(article.id);
 	}
 
@@ -79,6 +87,7 @@ export class ArticleService {
 	async delete(id: number, userDto: UserFromRequest): Promise<void> {
 		await this.checkIsUserAuthorByArticleId(id, userDto);
 		const article = await this.getById(id);
+		await this.deleteInvalidCache();
 		await this.articleRepository.remove(article);
 	}
 
@@ -92,6 +101,7 @@ export class ArticleService {
 	async softDelete(id: number, userDto: UserFromRequest): Promise<void> {
 		await this.checkIsUserAuthorByArticleId(id, userDto);
 		const article = await this.getById(id);
+		await this.deleteInvalidCache();
 		await this.articleRepository.softRemove(article);
 	}
 
@@ -101,8 +111,15 @@ export class ArticleService {
 	 * @returns Массив статей и информация пагинации
 	 */
 	async getAllPaginated(dto: GetArticlePaginatedDto): Promise<PaginationResultDto<ArticleEntity>> {
+		const cacheKey = this.getCacheKey(dto);
+		const cachedResult = await this.cacheManager.get(cacheKey);
+		if (cachedResult) {
+			return cachedResult as PaginationResultDto<ArticleEntity>;
+		}
 		const [items, count] = await this.articleRepository.findAllPaginated(dto);
-		return getPaginatedResult(items, count, dto.limit, dto.skip);
+		const result = getPaginatedResult(items, count, dto.limit, dto.skip);
+		await this.cacheManager.set(cacheKey, result, REDIS_TTL);
+		return result;
 	}
 
 	/**
@@ -183,5 +200,29 @@ export class ArticleService {
 		if (authorId !== requestingUser.id || authorEmail !== requestingUser.email) {
 			throw new ActionIsForbiddenForUserException();
 		}
+	}
+
+	/**
+	 * Создает хешированный ключ для Redis
+	 * @param dto - параметры пагинации и фильтров (skip, limit, authorId, active, title, startPublicDate, endPublicDate)
+	 * @returns Хешированный ключ для Redis
+	 */
+	private getCacheKey(dto: GetArticlePaginatedDto): string {
+		const filterString = JSON.stringify(dto, Object.keys(dto).sort());
+		const queryHash = crypto.createHash('md5').update(filterString).digest('hex').slice(0, 15);
+		return `articles:${dto.author ? 'author:' : ''}${queryHash}`;
+	}
+
+	/**
+	 * Удаляет невалидный кеш
+	 */
+	private async deleteInvalidCache(): Promise<void> {
+		const keysToDelete: string[] = [];
+		for (const storeObject of this.cacheManager.stores) {
+			for (const item of storeObject.store as Map<string, any>) {
+				keysToDelete.push(String(item[0]));
+			}
+		}
+		await this.cacheManager.mdel(keysToDelete);
 	}
 }

@@ -8,11 +8,15 @@ import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { ArticleModule } from './article/article.module';
+import { JwtCoreModule } from './configs/jwt-core-module';
+import { RedisModule } from './configs/redis.module';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot(configModuleOptions),
 		DatabaseModule,
+		JwtCoreModule,
+		RedisModule,
 		ThrottlerModule.forRoot({
 			throttlers: [
 				{

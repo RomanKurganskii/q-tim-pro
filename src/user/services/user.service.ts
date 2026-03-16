@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { UserEntity } from '../entities/user.entity';
@@ -18,10 +18,16 @@ import { PasswordIsSameException } from '../exceptions/password-is-same.exceptio
 import { WrongOldPasswordException } from '../exceptions/wrong-old-password.exception';
 import { UserFromRequest } from '../../authentication/interfaces/user-from-request.interface';
 import { ActionIsForbiddenForUserException } from '../exceptions/action-is-forbidden-for-user.exception';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import type { Cache } from 'cache-manager';
 
 @Injectable()
 export class UserService {
-	constructor(private readonly userRepository: UserRepository) {}
+	constructor(
+		private readonly userRepository: UserRepository,
+		@Inject(CACHE_MANAGER)
+		private readonly cacheManager: Cache,
+	) {}
 
 	/**
 	 * Создает нового пользователя
@@ -49,6 +55,7 @@ export class UserService {
 		const user = await this.getById(dto.id);
 		this.checkIfUserAllowToAction(user, userDto);
 		await this.userRepository.save({ ...user, ...dto });
+		await this.deleteInvalidCache(true);
 		return this.getById(user.id);
 	}
 
@@ -63,6 +70,7 @@ export class UserService {
 		const user = await this.getById(id);
 		this.checkIfUserAllowToAction(user, userDto);
 		await this.userRepository.remove(user);
+		await this.deleteInvalidCache(false);
 	}
 
 	/**
@@ -76,6 +84,7 @@ export class UserService {
 		const user = await this.getById(id, { articles: true });
 		this.checkIfUserAllowToAction(user, userDto);
 		await this.userRepository.softRemove(user);
+		await this.deleteInvalidCache(false);
 	}
 
 	/**
@@ -192,5 +201,24 @@ export class UserService {
 		if (!(await bcrypt.compare(oldPassword, user.password))) {
 			throw new WrongOldPasswordException();
 		}
+	}
+
+	/**
+	 * Удаляет невалидный кеш
+	 */
+	private async deleteInvalidCache(authorOnly: boolean): Promise<void> {
+		const keysToDelete: string[] = [];
+		for (const storeObject of this.cacheManager.stores) {
+			for (const item of storeObject.store as Map<string, any>) {
+				const key = String(item[0]);
+				if (authorOnly && /author/i.test(key)) {
+					keysToDelete.push(key);
+				}
+				if (!authorOnly) {
+					keysToDelete.push(key);
+				}
+			}
+		}
+		await this.cacheManager.mdel(keysToDelete);
 	}
 }
