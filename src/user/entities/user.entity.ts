@@ -1,5 +1,6 @@
-import { Column, Entity, Index, Unique } from 'typeorm';
+import { Column, Entity, Index, OneToMany, Unique } from 'typeorm';
 import { CommonFieldsBaseEntity } from '../../common/entities/common-fields-base.entity';
+import { ArticleEntity } from '../../article/entities/article.entity';
 
 @Unique(['email'])
 @Index(['email'])
@@ -21,4 +22,7 @@ export class UserEntity extends CommonFieldsBaseEntity {
 
 	@Column('varchar', { nullable: true, comment: 'Отчество пользователя' })
 	middleName?: string | null;
+
+	@OneToMany(() => ArticleEntity, (articles) => articles.author, { cascade: true })
+	articles: ArticleEntity[];
 }

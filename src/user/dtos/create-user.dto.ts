@@ -1,4 +1,4 @@
-import { IsDefined, IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsDefined, IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsStrongPassword } from '../decorators/is-strong-password.decorator';
 
@@ -32,7 +32,7 @@ export class CreateUserDto {
 		nullable: true,
 		type: String,
 	})
-	@IsDefined()
+	@IsOptional()
 	@IsString()
 	@MinLength(3)
 	lastName?: string;
@@ -44,7 +44,7 @@ export class CreateUserDto {
 		nullable: true,
 		type: String,
 	})
-	@IsDefined()
+	@IsOptional()
 	@IsString()
 	@MinLength(2)
 	firstName?: string;
@@ -56,7 +56,7 @@ export class CreateUserDto {
 		nullable: true,
 		type: String,
 	})
-	@IsDefined()
+	@IsOptional()
 	@IsString()
 	@MinLength(5)
 	middleName?: string;
