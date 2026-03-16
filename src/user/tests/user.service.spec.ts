@@ -8,12 +8,10 @@ import { ChangeUserPasswordDto } from '../dtos/change-user-password.dto';
 import { GetUserPaginatedDto } from '../dtos/get-user-paginated.dto';
 import { UserFromRequest } from '../../authentication/interfaces/user-from-request.interface';
 import { UserEntity } from '../entities/user.entity';
-import { PaginationResultDto } from '../../common/dtos/pagination-result.dto';
 import { EntityNotFoundException } from '../../common/exceptions/entity-not-found.exception';
 import { EntityExistsException } from '../../common/exceptions/entity-exists.exception';
 import { ActionIsForbiddenForUserException } from '../exceptions/action-is-forbidden-for-user.exception';
 import { PasswordIsSameException } from '../exceptions/password-is-same.exception';
-import { WrongOldPasswordException } from '../exceptions/wrong-old-password.exception';
 
 describe('UserService', () => {
 	let service: UserService;
