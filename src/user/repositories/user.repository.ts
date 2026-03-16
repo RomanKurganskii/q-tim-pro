@@ -12,6 +12,11 @@ export class UserRepository extends CommonRepository<UserEntity> {
 		super(repo, 'user');
 	}
 
+	/**
+	 * Находит статьи с пагинацией и фильтрацией с опциональными связями
+	 * @param dto - параметры пагинации и фильтров (skip, limit, active, articles)
+	 * @returns Результат пагинации с общим количеством
+	 */
 	async findAllPaginated(dto: GetUserPaginatedDto): Promise<[UserEntity[], number]> {
 		const query = this.repo.createQueryBuilder(this.alias);
 
@@ -30,6 +35,11 @@ export class UserRepository extends CommonRepository<UserEntity> {
 			.getManyAndCount();
 	}
 
+	/**
+	 * Находит урезанный объект пользователя для авторизации
+	 * @param email - email пользователя
+	 * @returns Урезанный объект пользователя, в котором есть id, active, password, email или ничего
+	 */
 	async findByEmailForAuth(email: string): Promise<UserEntity | null | undefined> {
 		return this.repo
 			.createQueryBuilder(this.alias)

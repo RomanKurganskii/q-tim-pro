@@ -1,98 +1,326 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Тестовое задание – Middle NestJS Developer
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## [Описание тестового задания](https://wild-bean-19b.notion.site/Middle-NestJS-824b413a224f490cb75bd6329888f99c)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Стек технологий
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js 20+
+- NestJS 10+
+- TypeScript
+- TypeORM + PostgreSQL
+- Redis (кэширование)
+- Docker + Docker Compose
+- Jest (unit-тесты)
 
-## Project setup
+---
+
+## Быстрый старт (Docker)
+
+### 1. Клонирование и подготовка
 
 ```bash
-$ npm install
+git clone <repository>
+cd project-name
+cp .env.example .env
 ```
-
-## Compile and run the project
+### 2. Запуск
 
 ```bash
-# development
-$ npm run start
+# Первый запуск (сборка)
+docker-compose up --build
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Последующие запуски (hot-reload)
+docker-compose down
+docker-compose up
 ```
+### API доступно: http://localhost:5000
 
-## Run tests
+### 3. Миграции
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run migration:run #запуск миграции
+npm run migration:generate #генерация миграции
+npm run migration:create #создание миграции
+npm run migration:revert #откат миграции
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 4. Unit-Тесты
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run test #запуск тестов
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Авторизация и работа с пользователем
+### 1. Регистрация
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+POST /authentication/registration
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+{
+  "email": "user@example.com",
+  "password": "Password123",
+  "lastName": "Петров",
+  "middleName": "Петрович",
+  "firstName": "Петр"
+}
+```
 
-## Support
+#### Ответ
+```bash
+{
+  "createdAt": "2026-03-16T06:42:50.861Z",
+  "updatedAt": "2026-03-16T06:42:50.861Z",
+  "id": 1,
+  "active": true,
+  "email": "user@example.com",
+  "lastName": "Петров",
+  "middleName": "Петрович",
+  "firstName": "Петр"
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 2. Логин
+```bash
+POST /authentication/sign-in
+{
+  "email": "user@example.com", 
+  "password": "password123"
+}
+```
+#### Ответ
+```bash
+{
+  "token": "eyJhbGciOiJIUzI1NiIs...",
+}
+```
 
-## Stay in touch
+### 3. Обновление данных пользователя
+```bash
+PATCH /user/update
+{
+  "id": 1,
+  "lastName": "Сидоров"
+}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Ответ
+```bash 
+{
+  "createdAt": "2026-03-16T06:42:50.861Z",
+  "updatedAt": "2026-03-16T06:44:50.861Z",
+  "id": 1,
+  "active": true,
+  "email": "user@example.com",
+  "lastName": "Сидоров",
+  "middleName": "Петрович",
+  "firstName": "Петр"
+}
+```
 
-## License
+### 4. Смена пароля
+```bash
+PATCH /user/change-password
+{
+  "id": 1,
+  "password": "Password123",
+  "oldPassword": "password123"
+}
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### 5. Удаление пользователя
+```bash
+DELETE /user/1
+```
+
+### 6. Мягкое удаление пользователя
+```bash
+DELETE /user/1/soft
+```
+### 7. Получить пользователя по id с опциональной связью со статьями
+```bash
+GET /user/1
+```
+#### Ответ
+```bash 
+{
+  "createdAt": "2026-03-16T06:42:50.861Z",
+  "updatedAt": "2026-03-16T06:44:50.861Z",
+  "id": 1,
+  "active": true,
+  "email": "user@example.com",
+  "lastName": "Сидоров",
+  "middleName": "Петрович",
+  "firstName": "Петр"
+}
+```
+### 8. Получить пользователей по ids с опциональной связью со статьями
+```bash
+GET /user/?ids=1,2,3
+```
+#### Ответ
+```bash 
+[
+  {
+  "createdAt": "2026-03-16T06:42:50.861Z",
+  "updatedAt": "2026-03-16T06:44:50.861Z",
+  "id": 1,
+  "active": true,
+  "email": "user@example.com",
+  "lastName": "Сидоров",
+  "middleName": "Петрович",
+  "firstName": "Петр"
+  }
+]
+```
+### 9. Получить пользователей с пагинацией
+```bash
+GET /user/paginated
+```
+#### Ответ
+```bash 
+{
+	"items": [],
+	"paginationInfo": {
+		"totalItems": 0,
+		"totalPages": 0,
+		"page": 1,
+		"perPage": 0,
+		"hasNextPage": false,
+		"hasPreviousPage": false
+	}
+}
+```
+
+
+---
+
+## CRUD Статьи
+### 1. Создание
+
+```bash
+POST /article/create
+
+{
+  "title": "Статья про уток",
+  "description": "Какое нибудь описание",
+  "authorId": 1,
+  "active": false
+}
+```
+
+#### Ответ
+```bash
+{
+	"createdAt": "2026-03-16T06:43:13.168Z",
+	"updatedAt": "2026-03-16T06:46:35.194Z",
+	"id": 1,
+	"active": true,
+	"title": "Статья про уток",
+	"description": "Какое нибудь описание",
+	"publicDate": null
+}
+```
+
+### 2. Обновление
+
+```bash
+PATCH /article/update
+
+{
+  "id": 1,
+  "publicArticle": true
+}
+```
+
+#### Ответ
+```bash
+{
+	"createdAt": "2026-03-16T06:43:13.168Z",
+	"updatedAt": "2026-03-16T06:46:35.194Z",
+	"id": 1,
+	"active": true,
+	"title": "Статья про уток",
+	"description": "Какое нибудь описание",
+	"publicDate": "2026-03-16T06:46:35.194Z"
+}
+```
+
+### 3. Удаление
+
+```bash
+GET /article/1
+```
+
+### 4. Мягкое удаление
+
+```bash
+GET /article/1/soft
+```
+
+### 5. Получить статью по id с опциональной связью с автором
+```bash
+GET /article/1
+```
+#### Ответ
+```bash 
+{
+	"createdAt": "2026-03-16T06:43:13.168Z",
+	"updatedAt": "2026-03-16T06:46:35.194Z",
+	"id": 8,
+	"active": true,
+	"title": "test_TITLE_1234_6",
+	"description": "description",
+	"publicDate": null
+}
+```
+### 6. Получить статьи по ids с опциональной связью с автором
+```bash
+GET /article/?ids=1,2,3?author=true
+```
+#### Ответ
+```bash 
+[
+{
+	"createdAt": "2026-03-16T06:43:13.168Z",
+	"updatedAt": "2026-03-16T06:46:35.194Z",
+	"id": 8,
+	"active": true,
+	"title": "test_TITLE_1234_6",
+	"description": "description",
+	"publicDate": null,
+	"author": {
+		"createdAt": "2026-03-16T06:42:50.861Z",
+		"updatedAt": "2026-03-16T06:42:50.861Z",
+		"id": 2,
+		"active": true,
+		"email": "test1@mail.ru",
+		"lastName": "any",
+		"firstName": "any",
+		"middleName": "any12"
+	}
+}
+]
+```
+### 7. Получить пользователей с пагинацией
+```bash
+GET /article/paginated
+```
+#### Ответ
+```bash 
+{
+	"items": [],
+	"paginationInfo": {
+		"totalItems": 0,
+		"totalPages": 0,
+		"page": 1,
+		"perPage": 0,
+		"hasNextPage": false,
+		"hasPreviousPage": false
+	}
+}
+```
+

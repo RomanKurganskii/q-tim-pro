@@ -8,6 +8,12 @@ import { UserFromRequest } from '../interfaces/user-from-request.interface';
 export class AuthenticationGuard implements CanActivate {
 	constructor(private readonly jwtService: JwtService) {}
 
+	/**
+	 * Проверяет JWT токен и добавляет user в request
+	 * @param context - ExecutionContext для извлечения токена
+	 * @returns true если токен валиден
+	 * @throws TokenValidationFailedException если токен недействителен или неверный формат токена
+	 */
 	canActivate(context: ExecutionContext): boolean {
 		const req: { headers: { authorization: string }; user: UserFromRequest } = context
 			.switchToHttp()

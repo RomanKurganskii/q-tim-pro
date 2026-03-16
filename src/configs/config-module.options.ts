@@ -15,5 +15,7 @@ export const configModuleOptions: ConfigModuleOptions = {
 		[ENV.JWT_SECRET]: Joi.string().required(),
 		[ENV.JWT_EXPIRATION_TIME]: Joi.string().required(),
 		[ENV.BCRYPT_SALT]: Joi.number().required(),
+		[ENV.REDIS_URL]: Joi.string().required(),
+		[ENV.REDIS_PORT]: Joi.number().required(),
 	}),
 };
