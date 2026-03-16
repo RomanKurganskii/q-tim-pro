@@ -14,5 +14,6 @@ export const configModuleOptions: ConfigModuleOptions = {
 		[ENV.POSTGRES_DB]: Joi.string().required(),
 		[ENV.JWT_SECRET]: Joi.string().required(),
 		[ENV.JWT_EXPIRATION_TIME]: Joi.string().required(),
+		[ENV.BCRYPT_SALT]: Joi.number().required(),
 	}),
 };
