@@ -63,6 +63,7 @@ export class ArticleService {
 		await this.checkIsUserAuthorByArticleId(dto.id, userDto);
 		const article = await this.getById(dto.id);
 		if (dto.title) {
+			dto.title = removeExtraSpaces(dto.title, null);
 			await this.checkIsTitleUnique(dto.title);
 		}
 		const active = dto.active ?? article.active;

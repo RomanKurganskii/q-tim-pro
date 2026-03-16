@@ -52,7 +52,7 @@ export class GetArticlePaginatedDto extends IntersectionType(
 	@IsPositive()
 	@IsOptional()
 	@Type(() => Number)
-	authorId: number;
+	authorId?: number;
 
 	@ApiProperty({
 		example: new Date(),
@@ -64,7 +64,7 @@ export class GetArticlePaginatedDto extends IntersectionType(
 	@IsOptional()
 	@IsDate()
 	@Type(() => Date)
-	startPublicDate: Date;
+	startPublicDate?: Date;
 
 	@ApiProperty({
 		example: new Date(),
@@ -76,5 +76,5 @@ export class GetArticlePaginatedDto extends IntersectionType(
 	@IsOptional()
 	@IsDate()
 	@Type(() => Date)
-	endPublicDate: Date;
+	endPublicDate?: Date;
 }
