@@ -9,6 +9,12 @@ export abstract class CommonRepository<T extends BaseEntity> extends Repository<
 		super(repo.target, repo.manager, repo.queryRunner);
 	}
 
+	/**
+	 * Находит сущности по ID с опциональными связями
+	 * @param ids - массив ID
+	 * @param relations - какие связи включить
+	 * @returns Найденные сущности или пустой массив
+	 */
 	async findByIdsWithRelations(ids: number[], relations?: Record<string, boolean>): Promise<T[]> {
 		const query = this.repo
 			.createQueryBuilder(this.alias)
@@ -18,6 +24,11 @@ export abstract class CommonRepository<T extends BaseEntity> extends Repository<
 		return query.getMany();
 	}
 
+	/**
+	 * Добавляет опциональные связи к запросу в БД
+	 * @param query - Тело запроса к БД
+	 * @param relations - какие связи включить
+	 */
 	protected addRelations(query: SelectQueryBuilder<T>, relations?: Record<string, boolean>): void {
 		if (!relations) return;
 

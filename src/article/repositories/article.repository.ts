@@ -12,6 +12,11 @@ export class ArticleRepository extends CommonRepository<ArticleEntity> {
 		super(repo, 'article');
 	}
 
+	/**
+	 * Находит статьи с пагинацией и фильтрацией с опциональными связями
+	 * @param dto - параметры пагинации и фильтров (skip, limit, authorId, active, title, startPublicDate, endPublicDate)
+	 * @returns Результат пагинации с общим количеством
+	 */
 	async findAllPaginated(dto: GetArticlePaginatedDto): Promise<[ArticleEntity[], number]> {
 		const query = this.repo.createQueryBuilder(this.alias);
 
@@ -59,6 +64,11 @@ export class ArticleRepository extends CommonRepository<ArticleEntity> {
 			.getManyAndCount();
 	}
 
+	/**
+	 * Находит название статьи по названию. Применяется LOWER,TRIM для данных из БД.
+	 * @param title - Название статьи
+	 * @returns Название статьи или ничего
+	 */
 	async findIfExistTitle(title: string): Promise<string | undefined> {
 		return this.repo
 			.createQueryBuilder(this.alias)
@@ -67,6 +77,11 @@ export class ArticleRepository extends CommonRepository<ArticleEntity> {
 			.getRawOne();
 	}
 
+	/**
+	 * Находит id и email автора статьи по id статьи.
+	 * @param id - Id статьи
+	 * @returns Id и email автора или ничего
+	 */
 	async findAuthorIdEmailByArticleId(
 		id: number,
 	): Promise<{ authorId: number; authorEmail: string } | undefined> {
