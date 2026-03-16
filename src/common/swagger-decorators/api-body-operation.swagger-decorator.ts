@@ -1,7 +1,7 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
-export const ApiPostOperation = <TBody extends Type<any>, TResponse extends Type<any>>(
+export const ApiBodyOperation = <TBody extends Type<any>, TResponse extends Type<any>>(
 	summary: string,
 	bodyDto: TBody,
 	responseDto: TResponse,
