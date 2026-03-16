@@ -14,7 +14,7 @@ export class GetUserPaginatedDto extends IntersectionType(PaginationInputDto, Us
 		type: Boolean,
 	})
 	@IsBoolean()
-	@Transform(({ value }) => transformBooleanFromString(value))
+	@Transform(({ value }) => transformBooleanFromString(String(value)))
 	@IsOptional()
 	active?: boolean;
 }

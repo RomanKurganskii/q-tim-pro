@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CommonFieldsBaseApiResponse } from '../../common/api-responses/common-fields-base.api-response';
+import { ArticleApiResponse } from '../../article/api-responses/article.api-response';
+import { ARTICLE_ENTITY_NAME } from '../../article/consts/article.const';
 
 export class UserApiResponse extends CommonFieldsBaseApiResponse {
 	@ApiProperty({
@@ -32,4 +34,13 @@ export class UserApiResponse extends CommonFieldsBaseApiResponse {
 		type: String,
 	})
 	middleName?: string | null;
+
+	@ApiProperty({
+		isArray: true,
+		type: ArticleApiResponse,
+		nullable: true,
+		description: ARTICLE_ENTITY_NAME,
+		example: null,
+	})
+	articles: ArticleApiResponse[];
 }

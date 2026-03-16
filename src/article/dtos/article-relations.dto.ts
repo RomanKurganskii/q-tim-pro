@@ -3,9 +3,9 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsOptional } from 'class-validator';
 import { transformBooleanFromString } from '../../utils/transform-boolean-from-string';
 
-export class UserRelationsDto {
+export class ArticleRelationsDto {
 	@ApiProperty({
-		description: 'Добавить статьи к сущности?',
+		description: 'Добавить автора к сущности?',
 		example: false,
 		required: false,
 		nullable: true,
@@ -14,5 +14,5 @@ export class UserRelationsDto {
 	@IsBoolean()
 	@Transform(({ value }) => transformBooleanFromString(String(value)))
 	@IsOptional()
-	readonly articles?: boolean;
+	readonly author?: boolean;
 }

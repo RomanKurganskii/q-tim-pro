@@ -30,7 +30,6 @@ export class UserController {
 		'Данные для обновления пользователя',
 	)
 	@Patch('/update')
-	@UseGuards()
 	async update(
 		@Body() dto: UpdateUserDto,
 		@Req() req: { user: UserFromRequest },

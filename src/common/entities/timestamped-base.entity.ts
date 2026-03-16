@@ -10,6 +10,6 @@ export abstract class TimestampedBaseEntity extends BaseEntity {
 	@UpdateDateColumn({ type: 'timestamp', comment: 'Дата обновления записи' })
 	updatedAt: Date;
 
-	@DeleteDateColumn({ type: 'timestamp', comment: 'Дата "мягкого" удаления записи' })
+	@DeleteDateColumn({ select: false, type: 'timestamp', comment: 'Дата "мягкого" удаления записи' })
 	deletedAt?: Date;
 }
